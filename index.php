@@ -76,19 +76,21 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}
 
       <?php
       #fetch forum posts
-  			$postQuery = $db->prepare("SELECT * FROM Forumn_Post");
+  			$postQuery = $db->prepare("SELECT * FROM Forum_Post");
         $postQuery->execute();
   			while($data = $postQuery->fetch(PDO::FETCH_ASSOC)) {
-  				$name = $data['Username'];
+          $id = $data['Post_ID'];
+  				$name = $data['Post_Username'];
           $gameID = $data['Game_ID'];
           $title = $data['Title'];
   				$description = $data['Description'];
   				$date = $data['TimePosted'];
+          $helpful = $data['Helpful'];
           #get game titele
           $gameQuery = $db->prepare("SELECT Game.Title FROM Game WHERE Game_ID = ". $gameID);
           $gameQuery->execute();
           $gameData = $gameQuery->fetch(PDO::FETCH_ASSOC);
-          $gameTitle = $gameData['Title']; 
+          $gameTitle = $gameData['Title'];
   		  ?>
       <div class="w3-container w3-card w3-white w3-round w3-margin"><br>
         <span class="w3-right w3-opacity"><?php echo $date; ?></span>
@@ -97,7 +99,7 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}
         <p><?php echo $description; ?></p>
         <div class="w3-row-padding" style="margin:0 -16px">
         </div>
-        <button type="button" class="btn defaultColor btn-hover w3-margin-bottom"><i class="fas fa-heart"></i> Like</button>
+        <button onclick="location.href='files/actions/like.php?id=<?php echo $id; ?>'" type="button" class="btn defaultColor btn-hover w3-margin-bottom"><?php echo $helpful; ?> <i class="fas fa-heart"></i> Like</button>
         <button type="button" class="btn defaultColor btn-hover w3-margin-bottom"><i class="fas fa-book"></i> Continue Reading?</button>
       </div>
     <?php } ?>
