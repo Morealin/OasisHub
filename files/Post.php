@@ -48,15 +48,27 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}
   <div class="w3-row">
     <!-- Left Column -->
     <div class="w3-col m3">
-        <!-- Profile -->
-       <div class="w3-card w3-round w3-white">
-        <div class="w3-container">
-         <h4 class="w3-center">Are you playing?</h4>
-         <hr>
-         <p> <i class="fas fa-dice w3-margin-right" style="color: #8cc159;" ></i> Current Game</p>
-        </div>
+      <!-- Current Game -->
+     <div class="w3-card w3-round w3-white">
+      <div class="w3-container">
+       <h4 class="w3-center">In Game?</h4>
+       <hr>
+       <center><p><i class="fas fa-dice w3-margin-right" style="color: #8cc159;" ></i><select type="text" name="post_game" id="Game" onchange="AddPlayer()">
+         <option name="notPlay" value="">--Not Playing--</option>
+         <?php
+         #fetch Game List
+           $gameList = $db->prepare("SELECT * FROM Game");
+           $gameList->execute();
+           while($list = $gameList->fetch(PDO::FETCH_ASSOC)) {
+             $gameListTitle = $list['Title'];
+             $gameListID = $list['Game_ID'];
+           ?>
+         <option name="<?php echo $gameListID; ?>" value="<?php echo $gameListID; ?>"><?php echo $gameListTitle; ?></option>
+       <?php } ?>
+     </select></p></center>
       </div>
-      <br>
+    </div>
+    <br>
   </div>
   <!-- End Left Column   -->
   <!-- Middle Column -->
