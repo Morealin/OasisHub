@@ -48,64 +48,107 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}
   <div class="w3-row">
     <!-- Left Column -->
     <div class="w3-col m3">
-        <!-- Profile -->
+        <!-- Current Game -->
        <div class="w3-card w3-round w3-white">
         <div class="w3-container">
-         <h4 class="w3-center">Are you playing?</h4>
+         <h4 class="w3-center">In Game?</h4>
          <hr>
-         <p> <i class="fas fa-dice w3-margin-right" style="color: #8cc159;" ></i> Current Game</p>
+         <center><p><i class="fas fa-dice w3-margin-right" style="color: #8cc159;" ></i><select type="text" name="post_game" id="Game" onchange="AddPlayer()">
+           <option name="notPlay" value="">--Not Playing--</option>
+           <?php
+           #fetch Game List
+             $gameList = $db->prepare("SELECT * FROM Game");
+             $gameList->execute();
+             while($list = $gameList->fetch(PDO::FETCH_ASSOC)) {
+               $gameListTitle = $list['Title'];
+               $gameListID = $list['Game_ID'];
+             ?>
+           <option name="<?php echo $gameListID; ?>" value="<?php echo $gameListID; ?>"><?php echo $gameListTitle; ?></option>
+         <?php } ?>
+       </select></p></center>
         </div>
       </div>
       <br>
   </div>
   <!-- End Left Column   -->
-  <!-- Middle Column -->
+    <!-- Middle Column -->
 
-  <div class="w3-col m7" style="float: center;">
-
-    <div class="w3-row-padding">
-      <div class="w3-col m12">
-        <div class="w3-card w3-round w3-white">
-          <div class="w3-container w3-padding">
-            <h2 class="w3-opacity">Create Your Own Post</h2>
-            <form action="actions/PostAction.php"method="post" name="PostForm">
-              <table>
-            			<tr>
-            				<td>Title</td>
-            				<td>&emsp;<input type="text" name="post_title" placeholder="Title">
-            				</td>
-            			</tr>
-            			<tr>
-            				<td>Game Subject</td>
-            				<td>&nbsp;&nbsp;
-                      <select type="text" name="post_game">
-                        <?php
-                        #fetch Game List
-                    			$postQuery = $db->prepare("SELECT * FROM Game");
-                    			$postQuery->execute();
-                    			while($data = $postQuery->fetch(PDO::FETCH_ASSOC)) {
-                    				$game = $data['Title'];
-                            $gameID = $data['Game_ID'];
-                    		  ?>
-                        <option name="<?php echo $gameID; ?>" value="<?php echo $gameID; ?>"><?php echo $game; ?></option>
-                      <?php } ?>
-                      </select>
-            				</td>
-            			</tr>
-            			<tr>
-            				<td>Description</td><br>
-            				<td>&emsp;<textarea rows="10" cols="60" type="textarea" name="post_desc" placeholder="Description..." ></textarea>
-            				</td>
-            			</tr>
-            		</table>
-              <button type="submit" class=" btn defaultColor btn-hover w3-right" name="PostButton"> Post</button>
-            </form>
+    <div class="w3-col m7" id="posts" style="float: center;">
+      <div class="w3-row-padding">
+        <div class="w3-col m12">
+          <div class="w3-card w3-round w3-white">
+            <div class="w3-container w3-padding">
+              <h2 class="w3-opacity">Game List</h2>
+            </div>
           </div>
         </div>
       </div>
+      <?php
+      // Fetch Game Data
+      $gameQuery = $db->prepare("SELECT * FROM Game");
+      $gameQuery->execute();
+      while($data = $gameQuery->fetch(PDO::FETCH_ASSOC)) {
+        $gameTitle = $data['Title'];
+        $gamePlayers = $data['playersOnline'];
+        $gameDesc = $data['Description'];
+        ?>
+      <div class="w3-container w3-card w3-white w3-round w3-margin"><br>
+        <h4><?php echo $gameTitle; ?></h4> <p style="font-size: 11px;"><?php echo 'Players Online: '.$gamePlayers; ?></p>
+        <hr class="w3-clear">
+        <p><?php echo $gameDesc; ?></p>
+        <div class="w3-row-padding" style="margin:0 -16px">
+        </div>
+        <button type="button" class="btn defaultColor btn-hover w3-margin-bottom"><i class="fas fa-book"></i> Forum</button>
+      </div>
+    <?php } ?>
+      <!-- End Middle Column -->
+      </div>
+
+      <!-- Right Column -->
+      <div class="w3-col m2"> <!--
+        <div class="w3-card w3-round w3-white w3-center">
+          <div class="w3-container">
+            <p>Upcoming Events:</p>
+            <img src="/w3images/forest.jpg" alt="Forest" style="width:100%;">
+            <p><strong>Holiday</strong></p>
+            <p>Friday 15:00</p>
+            <p><button class="w3-button w3-block w3-theme-l4">Info</button></p>
+          </div>
+        </div>
+        <br>
+
+        <div class="w3-card w3-round w3-white w3-center">
+          <div class="w3-container">
+            <p>Friend Request</p>
+            <img src="/w3images/avatar6.png" alt="Avatar" style="width:50%"><br>
+            <span>Jane Doe</span>
+            <div class="w3-row w3-opacity">
+              <div class="w3-half">
+                <button class="w3-button w3-block w3-green w3-section" title="Accept"><i class="fa fa-check"></i></button>
+              </div>
+              <div class="w3-half">
+                <button class="w3-button w3-block w3-red w3-section" title="Decline"><i class="fa fa-remove"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <br>
+
+        <div class="w3-card w3-round w3-white w3-padding-16 w3-center">
+          <p>ADS</p>
+        </div>
+        <br>
+
+        <div class="w3-card w3-round w3-white w3-padding-32 w3-center">
+          <p><i class="fa fa-bug w3-xxlarge"></i></p>
+        </div>
+
+       End Right Column -->
+      </div>
+
+    <!-- End Grid -->
     </div>
-    </div>
-    <!-- End Middle Column -->
+
   <!-- End Page Container -->
   </div>
   <br>
@@ -115,8 +158,17 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}
   <footer class="w3-container">
     <center style="color: grey;"><p>Powered by <a href="https://www.w3schools.com/w3css/default.asp" target="_blank">w3.css</a></p></center>
   </footer>
-
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script>
+  // CurrentGame UPDATE
+  function AddPlayer() {
+    var gameid = document.getElementById('Game').value;
+    $.ajax({
+      type: 'GET',
+      url: "files/actions/gamePlayers.php",
+      data: {id: gameid}
+    })
+  }
   // Accordion
   function myFunction(id) {
       var x = document.getElementById(id);
