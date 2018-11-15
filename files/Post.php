@@ -116,7 +116,17 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}
     <center style="color: grey;"><p>Powered by <a href="https://www.w3schools.com/w3css/default.asp" target="_blank">w3.css</a></p></center>
   </footer>
 
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script>
+  // CurrentGame UPDATE
+  function AddPlayer() {
+    var gameid = document.getElementById('Game').value;
+    $.ajax({
+      type: 'GET',
+      url: "files/actions/gamePlayers.php",
+      data: {id: gameid}
+    })
+  }
   // Accordion
   function myFunction(id) {
       var x = document.getElementById(id);
