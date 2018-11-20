@@ -1,9 +1,9 @@
 <?php
 
 /* Database config */
-$db_host		='198.71.227.39';
-$db_user		='dirjohn';
-$db_pass		='g?c%usFt';
+$db_host		='****';
+$db_user		='****';
+$db_pass		='****';
 $db_database	='OasisHub';
 /* End Config */
 
