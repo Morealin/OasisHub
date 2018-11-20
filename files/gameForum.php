@@ -30,7 +30,7 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}
 <div class="w3-top" >
  <div class="w3-bar w3-left-align w3-large defaultColor">
   <a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-theme-d2" href="javascript:void(0);" onclick="openNav()"><i class="fa fa-bars"></i></a>
-  <a href="../index.php" class="w3-bar-item w3-button w3-padding-large defaultDark" style="text-decoration: none;" title="Oasis Hub"><img src="/OasisHub/imgs/Oasis.png" width="30px" height="30px" alt="logo"/>&nbsp;Oasis Hub</a>
+  <a href="/OasisHub/index.php" class="w3-bar-item w3-button w3-padding-large defaultDark" style="text-decoration: none;" title="Oasis Hub"><img src="/OasisHub/imgs/Oasis.png" width="30px" height="30px" alt="logo"/>&nbsp;Oasis Hub</a>
   <a href="gameList.php" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white" title="Games"><i class="fas fa-gamepad"></i></a>
   <div class="w3-dropdown-hover w3-hide-small w3-right">
     <button class="w3-button w3-padding-large" title="Account">Username <i class="fas fa-bars"></i></button>
@@ -73,34 +73,56 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}
     <!-- Middle Column -->
 
     <div class="w3-col m7" id="posts" style="float: center;">
+      <?php
+        $gameID = $_GET['id'];
+        $game = $db->prepare("SELECT * FROM Game WHERE Game_ID = ".$gameID);
+        $game->execute();
+        while($list = $game->fetch(PDO::FETCH_ASSOC)) {
+          $gameTitle = $list['Title'];
+        }
+       ?>
+
       <div class="w3-row-padding">
         <div class="w3-col m12">
           <div class="w3-card w3-round w3-white">
             <div class="w3-container w3-padding">
-              <h2 class="w3-opacity">Game List</h2>
+              <h2 class="w3-opacity"><?php echo $gameTitle; ?> - Forum</h2>
+              <button onclick="location.href='/OasisHub/files/Post.php'" type="button" class=" btn defaultColor btn-hover w3-right"><i class="fas fa-edit"></i> Post</button>
             </div>
           </div>
         </div>
       </div>
+
       <?php
-      // Fetch Game Data
-      $gameQuery = $db->prepare("SELECT * FROM Game");
-      $gameQuery->execute();
-      while($data = $gameQuery->fetch(PDO::FETCH_ASSOC)) {
-        $gameTitle = $data['Title'];
-        $gamePlayers = $data['playersOnline'];
-        $gameDesc = $data['Description'];
-        $gameID = $data['Game_ID'];
+      #fetch forum posts
+        $postQuery = $db->prepare("SELECT * FROM Forum_Post WHERE Game_ID = ".$gameID);
+        $postQuery->execute();
+        while($data = $postQuery->fetch(PDO::FETCH_ASSOC)) {
+          $id = $data['Post_ID'];
+          $name = $data['Post_Username'];
+          $gameID = $data['Game_ID'];
+          $title = $data['Title'];
+          $description = $data['Description'];
+          $date = $data['TimePosted'];
+          $helpful = $data['Helpful'];
+          #get game titele
+          $gameQuery = $db->prepare("SELECT Game.Title FROM Game WHERE Game_ID = ". $gameID);
+          $gameQuery->execute();
+          $gameData = $gameQuery->fetch(PDO::FETCH_ASSOC);
+          $gameTitle = $gameData['Title'];
         ?>
       <div class="w3-container w3-card w3-white w3-round w3-margin"><br>
-        <h4><?php echo $gameTitle; ?></h4> <p style="font-size: 11px;"><?php echo 'Players Online: '.$gamePlayers; ?></p>
+        <span class="w3-right w3-opacity"><?php echo $date; ?></span>
+        <h4><?php echo $title; ?> - <?php echo $gameTitle; ?></h4> <p style="font-size: 11px;"><?php echo 'Posted by: '.$name; ?></p>
         <hr class="w3-clear">
-        <p><?php echo $gameDesc; ?></p>
+        <p><?php echo $description; ?></p>
         <div class="w3-row-padding" style="margin:0 -16px">
         </div>
-        <button onclick="location.href='gameForum.php?id=<?php echo $gameID; ?>'" value="<?php echo $gameID; ?>" class="btn defaultColor btn-hover w3-margin-bottom"><i class="fas fa-book"></i> Forum</button>
+        <button onclick="location.href='/OasisHub/files/actions/like.php?id=<?php echo $id; ?>'" type="button" class="btn defaultColor btn-hover w3-margin-bottom"><?php echo $helpful; ?> <i class="fas fa-heart"></i> Like</button>
+        <button type="button" class="btn defaultColor btn-hover w3-margin-bottom"><i class="fas fa-book"></i> Continue Reading?</button>
       </div>
-    <?php } ?>
+      <?php } ?>
+
       <!-- End Middle Column -->
       </div>
 
@@ -165,7 +187,7 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}
     var gameid = document.getElementById('Game').value;
     $.ajax({
       type: 'GET',
-      url: "actions/gamePlayers.php",
+      url: "files/actions/gamePlayers.php",
       data: {id: gameid}
     })
   }
