@@ -22,6 +22,15 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}
 .btn-hover:hover {
   background-color: #8cc159;
 }
+textarea {
+  float:left;
+  width: 95%;
+  min-height: 75px;
+  outline: none;
+  resize: none;
+  border: 1px solid grey;
+  margin-bottom: 2%;
+}
 
 </style>
 <body class="" style="background-color: white;">
@@ -30,8 +39,8 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}
 <div class="w3-top" >
  <div class="w3-bar w3-left-align w3-large defaultColor">
   <a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-theme-d2" href="javascript:void(0);" onclick="openNav()"><i class="fa fa-bars"></i></a>
-  <a href="../index.php" class="w3-bar-item w3-button w3-padding-large defaultDark" style="text-decoration: none;" title="Oasis Hub"><img src="/OasisHub/imgs/Oasis.png" width="30px" height="30px" alt="logo"/>&nbsp;Oasis Hub</a>
-  <a href="gameList.php" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white" title="Game List"><i class="fas fa-gamepad"></i></a>
+  <a href="/OasisHub/index.php" class="w3-bar-item w3-button w3-padding-large defaultDark" style="text-decoration: none;" title="Oasis Hub"><img src="/OasisHub/imgs/Oasis.png" width="30px" height="30px" alt="logo"/>&nbsp;Oasis Hub</a>
+  <a href="/OasisHub/files/gameList.php" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white" title="Game List"><i class="fas fa-gamepad"></i></a>
   <div class="w3-dropdown-hover w3-hide-small w3-right">
     <button class="w3-button w3-padding-large" title="Account">Username <i class="fas fa-bars"></i></button>
     <div class="w3-dropdown-content w3-card-4 w3-bar-block" style="width:300px">
@@ -73,34 +82,63 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}
     <!-- Middle Column -->
 
     <div class="w3-col m7" id="posts" style="float: center;">
-      <div class="w3-row-padding">
-        <div class="w3-col m12">
-          <div class="w3-card w3-round w3-white">
-            <div class="w3-container w3-padding">
-              <h2 class="w3-opacity">Game List</h2>
-            </div>
-          </div>
-        </div>
-      </div>
       <?php
-      // Fetch Game Data
-      $gameQuery = $db->prepare("SELECT * FROM Game");
-      $gameQuery->execute();
-      while($data = $gameQuery->fetch(PDO::FETCH_ASSOC)) {
-        $gameTitle = $data['Title'];
-        $gamePlayers = $data['playersOnline'];
-        $gameDesc = $data['Description'];
+      $postID = $_GET['id'];
+      $postQuery = $db->prepare("SELECT * FROM Forum_Post WHERE Post_ID = ".$postID);
+      $postQuery->execute();
+      while($data = $postQuery->fetch(PDO::FETCH_ASSOC)) {
+        $name = $data['Post_Username'];
         $gameID = $data['Game_ID'];
-        ?>
+        $title = $data['Title'];
+        $description = $data['Description'];
+        $date = $data['TimePosted'];
+        $helpful = $data['Helpful'];
+        #get game titele
+        $gameQuery = $db->prepare("SELECT Game.Title FROM Game WHERE Game_ID = ". $gameID);
+        $gameQuery->execute();
+        $gameData = $gameQuery->fetch(PDO::FETCH_ASSOC);
+        $gameTitle = $gameData['Title'];
+      }
+      ?>
       <div class="w3-container w3-card w3-white w3-round w3-margin"><br>
-        <h4><?php echo $gameTitle; ?></h4> <p style="font-size: 11px;"><?php echo 'Players Online: '.$gamePlayers; ?></p>
+        <span class="w3-right w3-opacity"><?php echo $date; ?></span>
+        <h4><?php echo $title; ?> - <?php echo $gameTitle; ?></h4> <p style="font-size: 11px;"><?php echo 'Posted by: '.$name; ?></p>
         <hr class="w3-clear">
-        <p><?php echo $gameDesc; ?></p>
+        <p><?php echo $description; ?></p>
         <div class="w3-row-padding" style="margin:0 -16px">
         </div>
-        <button onclick="location.href='gameForum.php?id=<?php echo $gameID; ?>'" value="<?php echo $gameID; ?>" class="btn defaultColor btn-hover w3-margin-bottom"><i class="fas fa-book"></i> Forum</button>
+        <button onclick="location.href='actions/like.php?id=<?php echo $postID; ?>'" type="button" class="btn defaultColor btn-hover w3-margin-bottom"><?php echo $helpful; ?> <i class="fas fa-heart"></i> Like</button>
       </div>
-    <?php } ?>
+
+      <div class="w3-container w3-card w3-white w3-round w3-margin"><br>
+        <form action="actions/CommentAction.php" method="post" name="CommentForm">
+          <input type="hidden" id="postID" name="postID" value="<?php echo $postID; ?>">
+          <textarea type="textarea" name="comment_desc" placeholder="Comment..." ></textarea>
+          <div class="w3-row-padding" style="margin:0 -16px">  </div>
+          <button type="submit" class=" btn defaultColor btn-hover w3-right"  style="margin-bottom: 2%;"name="CommentButton">Comment</button>
+        </form>
+      </div>
+
+      <div class="w3-container w3-card w3-white w3-round w3-margin">
+        <h5><strong>Comments</strong></h5>
+          <?php
+          $commentQuery = $db->prepare("SELECT * FROM Comment WHERE Post_ID = ".$postID);
+          $commentQuery->execute();
+          while($comment = $commentQuery->fetch(PDO::FETCH_ASSOC)) {
+            $commentName = $comment['Comment_Username'];
+            $commentDescription = $comment['Description'];
+            $commentDate = $comment['Comment_TimePost'];
+          ?>
+          <span class="w3-right w3-opacity"><?php echo $commentDate; ?></span>
+          <p style="font-size: 11px;"><?php echo 'Comment by: '.$commentName; ?></p>
+          <p><?php echo $commentDescription; ?></p>
+          <hr class="w3-clear">
+          <div class="w3-row-padding" style="margin:0 -16px">
+          </div>
+        <?php
+            }
+         ?>
+      </div>
       <!-- End Middle Column -->
       </div>
 
@@ -165,7 +203,7 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}
     var gameid = document.getElementById('Game').value;
     $.ajax({
       type: 'GET',
-      url: "actions/gamePlayers.php",
+      url: "files/actions/gamePlayers.php",
       data: {id: gameid}
     })
   }

@@ -31,7 +31,7 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}
  <div class="w3-bar w3-left-align w3-large defaultColor">
   <a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-theme-d2" href="javascript:void(0);" onclick="openNav()"><i class="fa fa-bars"></i></a>
   <a href="/OasisHub/index.php" class="w3-bar-item w3-button w3-padding-large defaultDark" style="text-decoration: none;" title="Oasis Hub"><img src="/OasisHub/imgs/Oasis.png" width="30px" height="30px" alt="logo"/>&nbsp;Oasis Hub</a>
-  <a href="gameList.php" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white" title="Games"><i class="fas fa-gamepad"></i></a>
+  <a href="gameList.php" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white" title="Game List"><i class="fas fa-gamepad"></i></a>
   <div class="w3-dropdown-hover w3-hide-small w3-right">
     <button class="w3-button w3-padding-large" title="Account">Username <i class="fas fa-bars"></i></button>
     <div class="w3-dropdown-content w3-card-4 w3-bar-block" style="width:300px">
@@ -95,7 +95,7 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}
 
       <?php
       #fetch forum posts
-        $postQuery = $db->prepare("SELECT * FROM Forum_Post WHERE Game_ID = ".$gameID);
+        $postQuery = $db->prepare("SELECT * FROM Forum_Post WHERE Game_ID = ".$gameID." ORDER BY TimePosted DESC");
         $postQuery->execute();
         while($data = $postQuery->fetch(PDO::FETCH_ASSOC)) {
           $id = $data['Post_ID'];
@@ -119,7 +119,7 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}
         <div class="w3-row-padding" style="margin:0 -16px">
         </div>
         <button onclick="location.href='/OasisHub/files/actions/like.php?id=<?php echo $id; ?>'" type="button" class="btn defaultColor btn-hover w3-margin-bottom"><?php echo $helpful; ?> <i class="fas fa-heart"></i> Like</button>
-        <button type="button" class="btn defaultColor btn-hover w3-margin-bottom"><i class="fas fa-book"></i> Continue Reading?</button>
+        <button onclick="location.href='/OasisHub/files/forumPost.php?id=<?php echo $id; ?>'" class="btn defaultColor btn-hover w3-margin-bottom"><i class="fas fa-book"></i> Continue Reading?</button>
       </div>
       <?php } ?>
 
