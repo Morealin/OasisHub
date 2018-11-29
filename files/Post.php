@@ -79,17 +79,17 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}
         <div class="w3-card w3-round w3-white">
           <div class="w3-container w3-padding">
             <h2 class="w3-opacity">Create Your Own Post</h2>
-            <form action="actions/PostAction.php"method="post" name="PostForm">
+              <h4 id="post_err" style="color:red;"></h4>
               <table>
             			<tr>
             				<td>Title</td>
-            				<td>&emsp;<input type="text" name="post_title" placeholder="Title">
+            				<td>&emsp;<input type="text" id="post_title" placeholder="Title">
             				</td>
             			</tr>
             			<tr>
             				<td>Game Subject</td>
             				<td>&nbsp;&nbsp;
-                      <select type="text" name="post_game">
+                      <select type="text" id="post_game">
                         <?php
                         #fetch Game List
                     			$postQuery = $db->prepare("SELECT * FROM Game");
@@ -105,12 +105,11 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}
             			</tr>
             			<tr>
             				<td>Description</td><br>
-            				<td>&emsp;<textarea rows="10" cols="60" type="textarea" name="post_desc" placeholder="Description..." ></textarea>
+            				<td>&emsp;<textarea rows="10" cols="60" type="textarea" id="post_desc" placeholder="Description..." ></textarea>
             				</td>
             			</tr>
             		</table>
-              <button type="submit" class=" btn defaultColor btn-hover w3-right" name="PostButton"> Post</button>
-            </form>
+              <button onclick="PostForum()" class=" btn defaultColor btn-hover w3-right" name="PostButton"> Post</button>
           </div>
         </div>
       </div>
@@ -138,6 +137,22 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}
       data: {id: gameid}
     })
   }
+  // Post to Forum
+  function PostForum() {
+    if (document.getElementById('post_title').value == "" || document.getElementById('post_desc').value == "") {
+      document.getElementById('post_err').innerHTML = "Please fill out all the fields before submitting the post!";
+    } else {
+    var post_title = document.getElementById('post_title').value;
+    var post_desc = document.getElementById('post_desc').value;
+    var post_game = document.getElementById('post_game').value;
+    $.ajax({
+      type: 'GET',
+      url: "actions/PostAction.php",
+      data: {post_title: post_title, post_game: post_game, post_desc: post_desc}
+    })
+    window.location.href = "/OasisHub/index.php";
+  }
+}
   // Accordion
   function myFunction(id) {
       var x = document.getElementById(id);

@@ -42,7 +42,7 @@ textarea {
   <a href="/OasisHub/index.php" class="w3-bar-item w3-button w3-padding-large defaultDark" style="text-decoration: none;" title="Oasis Hub"><img src="/OasisHub/imgs/Oasis.png" width="30px" height="30px" alt="logo"/>&nbsp;Oasis Hub</a>
   <a href="/OasisHub/files/gameList.php" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white" title="Game List"><i class="fas fa-gamepad"></i></a>
   <div class="w3-dropdown-hover w3-hide-small w3-right">
-    <button class="w3-button w3-padding-large" title="Account">Username <i class="fas fa-bars"></i></button>
+    <button  id="Username" value="Syl" class="w3-button w3-padding-large" title="Account">Username <i class="fas fa-bars"></i></button>
     <div class="w3-dropdown-content w3-card-4 w3-bar-block" style="width:300px">
       <a href="#" style="text-decoration: none;" class="w3-bar-item w3-button">Profile</a>
       <a href="#" style="text-decoration: none;" class="w3-bar-item w3-button">Sign Out</a>
@@ -110,16 +110,15 @@ textarea {
         <button onclick="location.href='actions/like.php?id=<?php echo $postID; ?>'" type="button" class="btn defaultColor btn-hover w3-margin-bottom"><?php echo $helpful; ?> <i class="fas fa-heart"></i> Like</button>
       </div>
 
-      <div class="w3-container w3-card w3-white w3-round w3-margin"><br>
-        <form action="actions/CommentAction.php" method="post" name="CommentForm">
+      <div id="comment_box" class="w3-container w3-card w3-white w3-round w3-margin"><br>
+          <p id="comm_err" style="color:red;"></p>
           <input type="hidden" id="postID" name="postID" value="<?php echo $postID; ?>">
-          <textarea type="textarea" name="comment_desc" placeholder="Comment..." ></textarea>
+          <textarea type="textarea" id="comment_desc" name="comment_desc" placeholder="Comment..." ></textarea>
           <div class="w3-row-padding" style="margin:0 -16px">  </div>
-          <button type="submit" class=" btn defaultColor btn-hover w3-right"  style="margin-bottom: 2%;"name="CommentButton">Comment</button>
-        </form>
+          <button onclick="CommentPost()" class=" btn defaultColor btn-hover w3-right" style="margin-bottom: 2%;" name="CommentButton">Comment</button>
       </div>
 
-      <div class="w3-container w3-card w3-white w3-round w3-margin">
+      <div id="comment_area" class="w3-container w3-card w3-white w3-round w3-margin">
         <h5><strong>Comments</strong></h5>
           <?php
           $commentQuery = $db->prepare("SELECT * FROM Comment WHERE Post_ID = ".$postID);
@@ -130,8 +129,8 @@ textarea {
             $commentDate = $comment['Comment_TimePost'];
           ?>
           <span class="w3-right w3-opacity"><?php echo $commentDate; ?></span>
-          <p style="font-size: 11px;"><?php echo 'Comment by: '.$commentName; ?></p>
-          <p><?php echo $commentDescription; ?></p>
+            <p style="font-size: 11px;"><?php echo 'Comment by: '.$commentName; ?></p>
+            <p><?php echo $commentDescription; ?></p>
           <hr class="w3-clear">
           <div class="w3-row-padding" style="margin:0 -16px">
           </div>
@@ -141,6 +140,7 @@ textarea {
       </div>
       <!-- End Middle Column -->
       </div>
+    </div>
 
       <!-- Right Column -->
       <div class="w3-col m2"> <!--
@@ -203,10 +203,30 @@ textarea {
     var gameid = document.getElementById('Game').value;
     $.ajax({
       type: 'GET',
-      url: "files/actions/gamePlayers.php",
+      url: "actions/gamePlayers.php",
       data: {id: gameid}
     })
   }
+  // Comment
+  function CommentPost() {
+    if (document.getElementById('comment_desc').value == "") {
+      document.getElementById('comm_err').innerHTML = "Please fill out the comment box before submitting the comment!";
+    } else {
+    var postID = document.getElementById('postID').value;
+    var comment_desc = document.getElementById('comment_desc').value;
+    var d = new Date();
+    var date = d.getFullYear() +'-'+ d.getMonth() +'-'+ d.getDay() +" "+ d.getHours() +':'+ d.getMinutes() +":"+ d.getSeconds();
+    var usename = document.getElementById('Username').value;
+    $.ajax({
+      type: 'GET',
+      url: "actions/CommentAction.php",
+      data: {postID: postID, comment_desc: comment_desc}
+    })
+  $('#comment_area').append(
+    "<span class='w3-right w3-opacity'>" + date + "</span><p style='font-size: 11px;'> Comment By: "+usename+"</p><p>"+comment_desc+"</p><hr class='w3-clear'><div class='w3-row-padding' style='margin:0 -16px'></div>"
+  );
+  }
+}
   // Accordion
   function myFunction(id) {
       var x = document.getElementById(id);
