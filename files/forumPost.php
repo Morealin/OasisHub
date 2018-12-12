@@ -1,4 +1,7 @@
-<?php  include('actions/connect.php');  ?>
+<?php
+include('actions/connect.php');
+session_start();
+  ?>
 <!DOCTYPE html>
 <html>
 <title>Oasis Hub</title>
@@ -42,11 +45,22 @@ textarea {
   <a href="/OasisHub/index.php" class="w3-bar-item w3-button w3-padding-large defaultDark" style="text-decoration: none;" title="Oasis Hub"><img src="/OasisHub/imgs/Oasis.png" width="30px" height="30px" alt="logo"/>&nbsp;Oasis Hub</a>
   <a href="/OasisHub/files/gameList.php" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white" title="Game List"><i class="fas fa-gamepad"></i></a>
   <div class="w3-dropdown-hover w3-hide-small w3-right">
-    <button  id="Username" value="Syl" class="w3-button w3-padding-large" title="Account">Username <i class="fas fa-bars"></i></button>
-    <div class="w3-dropdown-content w3-card-4 w3-bar-block" style="width:300px">
-      <a href="#" style="text-decoration: none;" class="w3-bar-item w3-button">Profile</a>
-      <a href="#" style="text-decoration: none;" class="w3-bar-item w3-button">Sign Out</a>
-    </div>
+    <?php
+      if(!isset($_SESSION['Username'])) {
+        ?>
+        <button onclick="location.href='files/sign-InUp.php?type=IN'" class="w3-button w3-padding-large" title="Sign-in">Sign-in <i class="fas fa-bars"></i></button>
+        <div class="w3-dropdown-content w3-card-4 w3-bar-block" style="width:300px">
+          <a href="sign-InUp.php?type=UP" style="text-decoration: none;" class="w3-bar-item w3-button">Sign-up</a>
+        </div>
+      <?php
+    } else {
+      ?>
+      <button class="w3-button w3-padding-large" id="account" value="<?php echo $_SESSION['Username']; ?>" title="Account"><?php echo $_SESSION['Username']; ?> <i class="fas fa-bars"></i></button>
+      <div class="w3-dropdown-content w3-card-4 w3-bar-block" style="width:300px">
+        <a href="Account.php" style="text-decoration: none;" class="w3-bar-item w3-button">Profile</a>
+        <a href="actions/signout.php?signout=signout" style="text-decoration: none;" class="w3-bar-item w3-button">Sign Out</a>
+      </div>
+  <?php } ?>
   </div>
  </div>
 </div>
@@ -113,6 +127,11 @@ textarea {
       <div id="comment_box" class="w3-container w3-card w3-white w3-round w3-margin"><br>
           <p id="comm_err" style="color:red;"></p>
           <input type="hidden" id="postID" name="postID" value="<?php echo $postID; ?>">
+          <?php
+            $t = Time();
+            $date = date("Y-m-d h:m:s",$t);
+          ?>
+          <input type="hidden" id="comment_date" name="comment_date" value="<?php echo $date; ?>">
           <textarea type="textarea" id="comment_desc" name="comment_desc" placeholder="Comment..." ></textarea>
           <div class="w3-row-padding" style="margin:0 -16px">  </div>
           <button onclick="CommentPost()" class=" btn defaultColor btn-hover w3-right" style="margin-bottom: 2%;" name="CommentButton">Comment</button>
@@ -212,18 +231,17 @@ textarea {
     if (document.getElementById('comment_desc').value == "") {
       document.getElementById('comm_err').innerHTML = "Please fill out the comment box before submitting the comment!";
     } else {
+    var user = document.getElementById('account').value;
     var postID = document.getElementById('postID').value;
     var comment_desc = document.getElementById('comment_desc').value;
-    var d = new Date();
-    var date = d.getFullYear() +'-'+ d.getMonth() +'-'+ d.getDay() +" "+ d.getHours() +':'+ d.getMinutes() +":"+ d.getSeconds();
-    var usename = document.getElementById('Username').value;
+    var date = document.getElementById('comment_date').value;
     $.ajax({
       type: 'GET',
       url: "actions/CommentAction.php",
-      data: {postID: postID, comment_desc: comment_desc}
+      data: {user: user, postID: postID, comment_desc: comment_desc}
     })
   $('#comment_area').append(
-    "<span class='w3-right w3-opacity'>" + date + "</span><p style='font-size: 11px;'> Comment By: "+usename+"</p><p>"+comment_desc+"</p><hr class='w3-clear'><div class='w3-row-padding' style='margin:0 -16px'></div>"
+    "<span class='w3-right w3-opacity'>" + date + "</span><p style='font-size: 11px;'> Comment By: "+user+"</p><p>"+comment_desc+"</p><hr class='w3-clear'><div class='w3-row-padding' style='margin:0 -16px'></div>"
   );
   }
 }

@@ -1,4 +1,7 @@
-<?php  include('actions/connect.php');  ?>
+<?php
+include('actions/connect.php');
+session_start();
+ ?>
 <!DOCTYPE html>
 <html>
 <title>Oasis Hub</title>
@@ -33,11 +36,22 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}
   <a href="/OasisHub/index.php" class="w3-bar-item w3-button w3-padding-large defaultDark" style="text-decoration: none;" title="Oasis Hub"><img src="/OasisHub/imgs/Oasis.png" width="30px" height="30px" alt="logo"/>&nbsp;Oasis Hub</a>
   <a href="gameList.php" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white" title="Game List"><i class="fas fa-gamepad"></i></a>
   <div class="w3-dropdown-hover w3-hide-small w3-right">
-    <button class="w3-button w3-padding-large" title="Account">Username <i class="fas fa-bars"></i></button>
-    <div class="w3-dropdown-content w3-card-4 w3-bar-block" style="width:300px">
-      <a href="#" style="text-decoration: none;" class="w3-bar-item w3-button">Profile</a>
-      <a href="#" style="text-decoration: none;" class="w3-bar-item w3-button">Sign Out</a>
-    </div>
+    <?php
+      if(!isset($_SESSION['Username'])) {
+        ?>
+        <button onclick="location.href='files/sign-InUp.php?type=IN'" class="w3-button w3-padding-large" title="Sign-in">Sign-in <i class="fas fa-bars"></i></button>
+        <div class="w3-dropdown-content w3-card-4 w3-bar-block" style="width:300px">
+          <a href="sign-InUp.php?type=UP" style="text-decoration: none;" class="w3-bar-item w3-button">Sign-up</a>
+        </div>
+      <?php
+    } else {
+      ?>
+      <button class="w3-button w3-padding-large" title="Account"><?php echo $_SESSION['Username']; ?> <i class="fas fa-bars"></i></button>
+      <div class="w3-dropdown-content w3-card-4 w3-bar-block" style="width:300px">
+        <a href="Account.php" style="text-decoration: none;" class="w3-bar-item w3-button">Profile</a>
+        <a href="actions/signout.php?signout=signout" style="text-decoration: none;" class="w3-bar-item w3-button">Sign Out</a>
+      </div>
+  <?php } ?>
   </div>
  </div>
 </div>
