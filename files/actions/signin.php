@@ -13,7 +13,7 @@ $userCheckQuery->execute();
 while($list = $userCheckQuery->fetch(PDO::FETCH_ASSOC)) {
     if ($user == $list['Username']) {
         $sameUser = true;
-        $checkAccType = $list['AccountTypeID'];
+        $checkAccType = $list['AccountType_ID'];
         $checkUser = $list['Username'];
         $checkPass = $list['Password'];
         $checkFName = $list['Fname'];
@@ -21,9 +21,10 @@ while($list = $userCheckQuery->fetch(PDO::FETCH_ASSOC)) {
         $checkEmail = $list['Email'];
     }
 }
+$passCrypt = crypt($pass1,'$6$rounds=6666$ShaumIsABithBoiAndSoIsMike$');
 if ($sameUser) {
-  if ($checkPass == $pass1) {
-      $_SESSION['AccTypeID'] = $checkAccType;
+  if ($checkPass == $passCrypt) {
+      $_SESSION['AccountType_ID'] = $checkAccType;
       $_SESSION['Username'] = $checkUser;
       $_SESSION['Fname'] = $checkFName;
       $_SESSION['Lname'] = $checkLName;

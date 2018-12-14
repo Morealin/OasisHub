@@ -6,12 +6,27 @@
   $fname = $_GET['fname'];
   $lname = $_GET['lname'];
 
-
-
-//echo $user;
+  $sameUser = false;
+  $sameEmail = false;
+  $userCheckQuery = $db->prepare("SELECT * FROM Account;");
+  $userCheckQuery->execute();
+  while($list = $userCheckQuery->fetch(PDO::FETCH_ASSOC)) {
+      if ($user == $list['Username']) {
+          $sameUser = true;
+      } else if ($email == $list['Email']) {
+        $sameEmail = true;
+      }
+  }
+  if ($sameUser) {
+      echo "Username already taken.";
+  } else if ($sameEmail) {
+      echo "Email already in use.";
+  } else {
+    $passCrypt = crypt($pass,'$6$rounds=6666$ShaumIsABithBoiAndSoIsMike$');
 
   $result = $db->prepare("INSERT INTO OasisHub.Account (AccountType_ID,Fname,Lname,Username,Password,Email)
                               VALUES (:AccType,:Fname,:Lname,:User,:Pass,:Email);");
-  $result->execute(array('AccType'=>5,'Fname'=>$fname,'Lname'=>$lname,'User'=>$user,'Pass'=>$pass,'Email'=>$email));
-
+  $result->execute(array('AccType'=>8,'Fname'=>$fname,'Lname'=>$lname,'User'=>$user,'Pass'=>$passCrypt,'Email'=>$email));
+  echo "signup";
+}
 ?>

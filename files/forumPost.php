@@ -48,7 +48,7 @@ textarea {
     <?php
       if(!isset($_SESSION['Username'])) {
         ?>
-        <button onclick="location.href='files/sign-InUp.php?type=IN'" class="w3-button w3-padding-large" title="Sign-in">Sign-in <i class="fas fa-bars"></i></button>
+        <button onclick="location.href='sign-InUp.php?type=IN'" class="w3-button w3-padding-large" title="Sign-in">Sign-in <i class="fas fa-bars"></i></button>
         <div class="w3-dropdown-content w3-card-4 w3-bar-block" style="width:300px">
           <a href="sign-InUp.php?type=UP" style="text-decoration: none;" class="w3-bar-item w3-button">Sign-up</a>
         </div>
@@ -57,6 +57,10 @@ textarea {
       ?>
       <button class="w3-button w3-padding-large" id="account" value="<?php echo $_SESSION['Username']; ?>" title="Account"><?php echo $_SESSION['Username']; ?> <i class="fas fa-bars"></i></button>
       <div class="w3-dropdown-content w3-card-4 w3-bar-block" style="width:300px">
+        <?php  $admin = $_SESSION['AccountType_ID'];
+        if ($admin == "7") { ?>
+        <a href="administrate.php" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Manage</a>
+      <?php  } ?>
         <a href="Account.php" style="text-decoration: none;" class="w3-bar-item w3-button">Profile</a>
         <a href="actions/signout.php?signout=signout" style="text-decoration: none;" class="w3-bar-item w3-button">Sign Out</a>
       </div>
@@ -231,6 +235,7 @@ textarea {
     if (document.getElementById('comment_desc').value == "") {
       document.getElementById('comm_err').innerHTML = "Please fill out the comment box before submitting the comment!";
     } else {
+      try {
     var user = document.getElementById('account').value;
     var postID = document.getElementById('postID').value;
     var comment_desc = document.getElementById('comment_desc').value;
@@ -243,7 +248,10 @@ textarea {
   $('#comment_area').append(
     "<span class='w3-right w3-opacity'>" + date + "</span><p style='font-size: 11px;'> Comment By: "+user+"</p><p>"+comment_desc+"</p><hr class='w3-clear'><div class='w3-row-padding' style='margin:0 -16px'></div>"
   );
-  }
+} catch (err) {
+  document.getElementById('comm_err').innerHTML = "Please login before commenting.";
+}
+}
 }
   // Accordion
   function myFunction(id) {

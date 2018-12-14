@@ -94,7 +94,7 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}
                 			</tr>
                 			<tr>
                 				<td>Password:</td>
-                				<td><input type="text" id="sign_pass1" name="sign_pass1" placeholder="Password...">
+                				<td><input type="password" id="sign_pass1" name="sign_pass1" placeholder="Password...">
                 				</td>
                 			</tr>
                 		</table>
@@ -120,12 +120,12 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}
               			</tr>
               			<tr>
               				<td>Password:</td>
-              				<td><input type="text" id="sign_pass1" placeholder="Password...">
+              				<td><input type="password" id="sign_pass1" placeholder="Password...">
               				</td>
               			</tr>
               			<tr>
               				<td>Retype Password: </td>
-              				<td><input type="text" id="sign_pass2" placeholder="Password..." >
+              				<td><input type="password" id="sign_pass2" placeholder="Password..." >
               				</td>
               			</tr>
                     <tr>
@@ -246,17 +246,25 @@ function signup() {
     document.getElementById('err').innerHTML = "Please fill out all of the fields!";
   } else if (pass1 != pass2){
     document.getElementById('err').innerHTML = "Passwords Do Not Match!";
-  } else if (user == "") {
-    document.getElementById('err').innerHTML = "Username is Already Taken!";
-  } else if (!emailMatch.test(email)) {
+  }  else if (!emailMatch.test(email)) {
     document.getElementById('err').innerHTML = "Invalid Email Address!";
+  } else if (user.length > 45) {
+    document.getElementById('err').innerHTML = "Username Must be 45 Characters or less!";
+  } else if (pass1.length > 20) {
+    document.getElementById('err').innerHTML = "Password must be 20 Characters or less!";
   } else {
   $.ajax({
     type: "GET",
     url: "actions/signup.php",
-    data: {user: user, pass1: pass1, email: email, fname: fname, lname: lname}
+    data: {user: user, pass1: pass1, email: email, fname: fname, lname: lname},
+    success: function(response) {
+      if (response == "signup") {
+          window.location.href = "sign-InUp.php?type=IN";
+      } else {
+      document.getElementById('err').innerHTML = response;
+    }
+    }
   })
-  window.location.href = "/OasisHub/files/sign-InUp.php?type=IN";
 }
 }
 // Accordion

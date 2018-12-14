@@ -38,16 +38,15 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}
   <div class="w3-dropdown-hover w3-hide-small w3-right">
     <?php
       if(!isset($_SESSION['Username'])) {
-        ?>
-        <button onclick="location.href='files/sign-InUp.php?type=IN'" class="w3-button w3-padding-large" title="Sign-in">Sign-in <i class="fas fa-bars"></i></button>
-        <div class="w3-dropdown-content w3-card-4 w3-bar-block" style="width:300px">
-          <a href="sign-InUp.php?type=UP" style="text-decoration: none;" class="w3-bar-item w3-button">Sign-up</a>
-        </div>
-      <?php
+        header("Location: sign-InUp.php?type=IN");
     } else {
       ?>
       <button class="w3-button w3-padding-large" id="account" value="<?php echo $_SESSION['Username']; ?>" title="Account"><?php echo $_SESSION['Username']; ?> <i class="fas fa-bars"></i></button>
       <div class="w3-dropdown-content w3-card-4 w3-bar-block" style="width:300px">
+        <?php  $admin = $_SESSION['AccountType_ID'];
+        if ($admin == "7") { ?>
+        <a href="administrate.php" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Manage</a>
+      <?php  } ?>
         <a href="Account.php" style="text-decoration: none;" class="w3-bar-item w3-button">Profile</a>
         <a href="actions/signout.php?signout=signout" style="text-decoration: none;" class="w3-bar-item w3-button">Sign Out</a>
       </div>

@@ -1,5 +1,5 @@
 <?php
- include('files/actions/connect.php');
+ include('actions/connect.php');
 session_start();
   ?>
 <!DOCTYPE html>
@@ -33,27 +33,19 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}
 <div class="w3-top" >
  <div class="w3-bar w3-left-align w3-large defaultColor">
   <a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-theme-d2" href="javascript:void(0);" onclick="openNav()"><i class="fa fa-bars"></i></a>
-  <a href="index.php" class="w3-bar-item w3-button w3-padding-large defaultDark" style="text-decoration: none;" title="Oasis Hub"><img src="/OasisHub/imgs/Oasis.png" width="30px" height="30px" alt="logo"/>&nbsp;Oasis Hub</a>
-  <a href="files/gameList.php" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white" title="Game List"><i class="fas fa-gamepad"></i></a>
+  <a href="../index.php" class="w3-bar-item w3-button w3-padding-large defaultDark" style="text-decoration: none;" title="Oasis Hub"><img src="/OasisHub/imgs/Oasis.png" width="30px" height="30px" alt="logo"/>&nbsp;Oasis Hub</a>
+  <a href="gameList.php" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white" title="Game List"><i class="fas fa-gamepad"></i></a>
   <div class="w3-dropdown-hover w3-hide-small w3-right">
     <?php
-      if(!isset($_SESSION['Username'])) {
-        ?>
-        <button onclick="location.href='files/sign-InUp.php?type=IN'" class="w3-button w3-padding-large" title="Sign-in">Sign-in <i class="fas fa-bars"></i></button>
-        <div class="w3-dropdown-content w3-card-4 w3-bar-block" style="width:300px">
-          <a href="files/sign-InUp.php?type=UP" style="text-decoration: none;" class="w3-bar-item w3-button">Sign-up</a>
-        </div>
-      <?php
+      if($_SESSION['AccountType_ID'] != 7) {
+        header("Location: sign-InUp.php?type=IN");
     } else {
       ?>
     <button class="w3-button w3-padding-large" title="Account"><?php echo $_SESSION['Username']; ?> <i class="fas fa-bars"></i></button>
     <div class="w3-dropdown-content w3-card-4 w3-bar-block" style="width:300px">
-      <?php  $admin = $_SESSION['AccountType_ID'];
-      if ($admin == "7") { ?>
-      <a href="files/administrate.php" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Manage</a>
-    <?php  } ?>
-      <a href="files/Account.php" style="text-decoration: none;" class="w3-bar-item w3-button">Profile</a>
-      <a href="files/actions/signout.php?signout=signout" style="text-decoration: none;" class="w3-bar-item w3-button">Sign Out</a>
+      <a href="administrate.php" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Manage</a>
+      <a href="Account.php" style="text-decoration: none;" class="w3-bar-item w3-button">Profile</a>
+      <a href="actions/signout.php?signout=signout" style="text-decoration: none;" class="w3-bar-item w3-button">Sign Out</a>
     </div>
   <?php } ?>
   </div>
@@ -96,8 +88,61 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}
         <div class="w3-col m12">
           <div class="w3-card w3-round w3-white">
             <div class="w3-container w3-padding">
-              <h2 class="w3-opacity">Popular Posts</h2>
-              <button onclick="location.href='files/Post.php'" type="button" class=" btn defaultColor btn-hover w3-right"><i class="fas fa-edit"></i> Post</button>
+              <h2 class="w3-opacity">Administrate</h2>
+            </div>
+          </div>
+        </div>
+      </div><br>
+
+      <div class="w3-row-padding">
+        <div class="w3-col m12">
+          <div class="w3-card w3-round w3-white">
+            <div class="w3-container w3-padding">
+              <h2 class="w3-opacity">Add Game</h2>
+              <h4 id="err" style="color:red;"></h4>
+              <table>
+            			<tr>
+            				<td>Game Title</td>
+            				<td>&emsp;<input type="text" id="game_title" placeholder="Title">
+            				</td>
+            			</tr>
+            			<tr>
+            				<td>Game Description</td><br>
+            				<td>&emsp;<textarea rows="10" cols="60" type="textarea" id="game_desc" placeholder="Description..." ></textarea>
+            				</td>
+            			</tr>
+            		</table>
+              <button onclick="GameCreate()" class=" btn defaultColor btn-hover w3-right" name="GameButton"> Add Game</button>
+            </div>
+          </div>
+        </div>
+      </div><br>
+
+      <div class="w3-row-padding">
+        <div class="w3-col m12">
+          <div class="w3-card w3-round w3-white">
+            <div class="w3-container w3-padding">
+              <h2 class="w3-opacity">Promote User</h2>
+              <h4 id="err" style="color:red;"></h4>
+              <table>
+                <?php
+                #fetch user list
+            			$promoteQuery = $db->prepare("SELECT * FROM Account WHERE AccountType_ID = 8 ORDER BY Username Asc");
+                  $promoteQuery->execute();
+            			while($promote = $promoteQuery->fetch(PDO::FETCH_ASSOC)) {
+                    $promoteID = $promote['Acc_ID'];
+            				$promoteName = $promote['Username'];
+                    $accType = $promote['AccountType_ID'];
+            		  ?>
+                  <form type="post" action="actions/promote.php" onSubmit="return confirm('Are you sure you want to update this?')">
+                    <input type="hidden" name="promoteID" value="<?php echo $promoteID; ?>" />
+                    <input type="hidden" name="promoteUser" value="<?php echo $promoteName; ?>" />
+                    <p style="font-size: 14px; display: inline;"><?php echo $promoteName; ?></p>
+                    <button  style="font-size: 11px; display: inline;" type="submit" id="promoteBtn" class="btn defaultColor btn-hover w3-margin-bottom w3-right">Promote</button>
+                    <div class="w3-row-padding" style="margin:0 -16px">  </div>
+                  </form>
+                </table>
+              <?php } ?>
             </div>
           </div>
         </div>
@@ -105,7 +150,7 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}
 
       <?php
       #fetch forum posts
-  			$postQuery = $db->prepare("SELECT * FROM Forum_Post WHERE Helpful > 15");
+  			$postQuery = $db->prepare("SELECT * FROM Forum_Post ORDER BY Helpful Desc");
         $postQuery->execute();
   			while($data = $postQuery->fetch(PDO::FETCH_ASSOC)) {
           $id = $data['Post_ID'];
@@ -122,14 +167,13 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}
           $gameTitle = $gameData['Title'];
   		  ?>
       <div class="w3-container w3-card w3-white w3-round w3-margin"><br>
-        <span class="w3-right w3-opacity"><?php echo $date; ?></span>
-        <h4><?php echo $title; ?> - <?php echo $gameTitle; ?></h4> <p style="font-size: 11px;"><?php echo 'Posted by: '.$name; ?></p>
-        <hr class="w3-clear">
-        <p><?php echo $description; ?></p>
-        <div class="w3-row-padding" style="margin:0 -16px">
-        </div>
-        <button onclick="location.href='files/actions/like.php?id=<?php echo $id; ?>'" type="button" class="btn defaultColor btn-hover w3-margin-bottom"><?php echo $helpful; ?> <i class="fas fa-heart"></i> Like</button>
-        <button onclick="location.href='/OasisHub/files/forumPost.php?id=<?php echo $id; ?>'" class="btn defaultColor btn-hover w3-margin-bottom"><i class="fas fa-book"></i> Continue Reading?</button>
+        <form type="post" action="actions/delete.php" onSubmit="return confirm('Are you sure you want to delete this?')">
+          <input type="hidden" name="id" value="<?php echo $id; ?>" />
+          <span class="w3-right w3-opacity"><?php echo $date; ?></span>
+          <h4><?php echo $title; ?> - <?php echo $gameTitle; ?></h4> <p style="font-size: 11px;"><?php echo 'Posted by: '.$name; ?></p>
+          <button onclick="location.href='/OasisHub/files/forumPost.php?id=<?php echo $id; ?>'" class="btn defaultColor btn-hover w3-margin-bottom"><i class="fas fa-book"></i> Continue Reading?</button>
+          <button type="submit" id="deleteBtn" class="btn btn-danger btn-hover w3-margin-bottom w3-right"><i class="fas fa-times"></i> Delete</button>
+        </form>
       </div>
     <?php } ?>
     <!-- End Middle Column -->
@@ -196,9 +240,32 @@ function AddPlayer() {
   var gameid = document.getElementById('Game').value;
   $.ajax({
     type: 'GET',
-    url: "files/actions/gamePlayers.php",
+    url: "actions/gamePlayers.php",
     data: {id: gameid}
   })
+}
+// Game Create
+function GameCreate() {
+  if (document.getElementById('game_title').value == "" || document.getElementById('game_desc').value == "") {
+    document.getElementById('err').innerHTML = "Please fill out all the fields before adding the game!";
+  } else {
+  var game_title = document.getElementById('game_title').value;
+  var game_desc = document.getElementById('game_desc').value;
+  $.ajax({
+    type: 'GET',
+    url: "actions/gameCreate.php",
+    data: {game_title: game_title, game_desc: game_desc},
+    success: function (response) {
+        if (response != "") {
+          document.getElementById('err').innerHTML = response;
+        } else {
+          document.getElementById('err').innerHTML = "Game has been successfully added.";
+          document.getElementById('game_title').value = "";
+          document.getElementById('game_desc').value = "";
+        }
+    }
+  })
+}
 }
 // Accordion
 function myFunction(id) {
