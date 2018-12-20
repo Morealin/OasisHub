@@ -21,7 +21,7 @@ while($list = $userCheckQuery->fetch(PDO::FETCH_ASSOC)) {
         $checkEmail = $list['Email'];
     }
 }
-$passCrypt = crypt($pass1,'$6$rounds=6666$ShaumIsABithBoiAndSoIsMike$');
+$passCrypt = crypt($pass1,'$6$rounds=6666$ShaumIsAGreatBoiAndSoIsMike$');
 if ($sameUser) {
   if ($checkPass == $passCrypt) {
       $_SESSION['AccountType_ID'] = $checkAccType;

@@ -22,7 +22,7 @@
   } else if ($sameEmail) {
       echo "Email already in use.";
   } else {
-    $passCrypt = crypt($pass,'$6$rounds=6666$ShaumIsABithBoiAndSoIsMike$');
+    $passCrypt = crypt($pass,'$6$rounds=6666$ShaumIsAGreatBoiAndSoIsMike$');
 
   $result = $db->prepare("INSERT INTO OasisHub.Account (AccountType_ID,Fname,Lname,Username,Password,Email)
                               VALUES (:AccType,:Fname,:Lname,:User,:Pass,:Email);");
