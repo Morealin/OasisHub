@@ -124,7 +124,7 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}
           <input type="hidden" name="id" value="<?php echo $id; ?>" />
           <span class="w3-right w3-opacity"><?php echo $date; ?></span>
           <h4 id="title"><?php echo $title; ?> - <?php echo $gameTitle; ?></h4> <p style="font-size: 11px;"><?php echo 'Posted by: '.$name; ?></p>
-          <button onclick="location.href='/OasisHub/files/forumPost.php?id=<?php echo $id; ?>'" class="btn defaultColor btn-hover w3-margin-bottom"><i class="fas fa-book"></i> Continue Reading?</button>
+          <a href='/OasisHub/files/forumPost.php?id=<?php echo $id; ?>' class="btn defaultColor btn-hover w3-margin-bottom"><i class="fas fa-book"></i> Continue Reading?</a>
           <button type="submit" id="deleteBtn" class="btn btn-danger btn-hover w3-margin-bottom w3-right"><i class="fas fa-times"></i> Delete</button>
         </form>
       </div>

@@ -248,10 +248,10 @@ function signup() {
     document.getElementById('err').innerHTML = "Passwords Do Not Match!";
   }  else if (!emailMatch.test(email)) {
     document.getElementById('err').innerHTML = "Invalid Email Address!";
-  } else if (user.length > 45) {
-    document.getElementById('err').innerHTML = "Username Must be 45 Characters or less!";
-  } else if (pass1.length > 20) {
-    document.getElementById('err').innerHTML = "Password must be 20 Characters or less!";
+  } else if (user.length > 45 || user.length < 5) {
+    document.getElementById('err').innerHTML = "Username Must be between 5 and 45 Characters!";
+  } else if (pass1.length > 20 || pass1.length < 5) {
+    document.getElementById('err').innerHTML = "Password must be between 5 and 20 Characters!";
   } else {
   $.ajax({
     type: "GET",
